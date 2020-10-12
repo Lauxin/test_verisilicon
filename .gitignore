@@ -1,4 +1,6 @@
 # local
 *.zip
+
+# generate
 result/
 deblock.yuv
