@@ -1,0 +1,563 @@
+HEVC Encoder API version 2.2
+HW ID:  0x80006200	 SW Build: 43.14.10
+HW ID:  0x80006200	 SW Build: 43.14.10
+Usage:  enc [options] -i inputfile
+
+Default parameters are marked inside []. More detailed description of
+HEVC API parameters can be found from HEVC API Manual.
+
+  -H --help                        This help,
+
+ Parameters affecting which input frames are encoded:
+  -i[s] --input                    Read input video sequence from file. [input.yuv]
+  -o[s] --output                   Write output HEVC stream to file. [stream.hevc]
+  -a[n] --firstPic                 First picture of input file to encode. [0]
+  -b[n] --lastPic                  Last picture of input file to encode. [100]
+  -f[n] --outputRateNumer          1..1048575 Output picture rate numerator. [30]
+  -F[n] --outputRateDenom          1..1048575 Output picture rate denominator. [1]
+                                   Encoded frame rate will be
+                                   outputRateNumer/outputRateDenom fps
+  -j[n] --inputRateNumer           1..1048575 Input picture rate numerator. [30]
+  -J[n] --inputRateDenom           1..1048575 Input picture rate denominator. [1]
+
+ Parameters affecting input frame and encoded frame resolutions and cropping:
+  -w[n] --lumWidthSrc              Width of source image. [176]
+  -h[n] --lumHeightSrc             Height of source image. [144]
+  -x[n] --width                    Width of encoded output image. [--lumWidthSrc]
+  -y[n] --height                   Height of encoded output image. [--lumHeightSrc]
+  -X[n] --horOffsetSrc             Output image horizontal cropping offset,must be even. [0]
+  -Y[n] --verOffsetSrc             Output image vertical cropping offset,must be even. [0]
+ 
+ Parameters affecting input frame and reference frame buffer alignment in memory:
+        --inputAlignmentExp        0..12 set alignment value [4]
+                                   0 = Disable alignment 
+                                   4..12 = addr of input frame buffer and each line aligned to 2^inputAlignmentExp 
+        --refAlignmentExp          0..12 set alignment value [0]
+                                   0 = Disable alignment 
+                                   4..12 = addr of reference frame buffer and each line aligned to 2^refAlignmentExp 
+        --refChromaAlignmentExp    0..12 set alignment value [0]
+                                   0 = Disable alignment 
+                                   4..12 = addr of reference frame buffer and each line aligned to 2^alignment_exp 
+
+ Parameters for pre-processing frames before encoding:
+  -l[n] --inputFormat              Input YUV format. [0]
+                                   0 - YUV420 planar CbCr (IYUV/I420)
+                                   1 - YUV420 semiplanar CbCr (NV12)
+                                   2 - YUV420 semiplanar CrCb (NV21)
+                                   3 - YUYV422 interleaved (YUYV/YUY2)
+                                   4 - UYVY422 interleaved (UYVY/Y422)
+                                   5 - RGB565 16bpp
+                                   6 - BGR565 16bpp
+                                   7 - RGB555 16bpp
+                                   8 - BGR555 16bpp
+                                   9 - RGB444 16bpp
+                                   10 - BGR444 16bpp
+                                   11 - RGB888 32bpp
+                                   12 - BGR888 32bpp
+                                   13 - RGB101010 32bpp
+                                   14 - BGR101010 32bpp
+                                   15 - YUV420 10 bit planar CbCr (I010)
+                                   16 - YUV420 10 bit planar CbCr (P010)
+                                   17 - YUV420 10 bit planar CbCr packed 
+                                   18 - YUV420 10 bit packed(Y0L2) 
+                                   19 - YUV420 customer private tile for HEVC  
+                                   20 - YUV420 customer private tile for H264 
+                                   21 - YUV420 semiplanar CbCr customer private tile 
+                                   22 - YUV420 semiplanar CrCb customer private tile 
+                                   23 - YUV420 P010 customer private tile 
+                                   24 - YUV420 SEMIPLANAR 101010 
+                                   26 - YUV420 8 bit tile 64x4 
+                                   27 - YUV420 UV 8 bit tile 64x4 
+                                   28 - YUV420 10 bit tile 32x4 
+                                   29 - YUV420 10 bit tile 48x4 
+                                   30 - YUV420 VU 10 bit tile 48x4 
+                                   31 - YUV420 8 bit tile 128x2 
+                                   32 - YUV420 UV 8 bit tile 128x2 
+                                   33 - YUV420 10 bit tile 96x2 
+                                   34 - YUV420 VU 10 bit tile 96x2 
+  -O[n] --colorConversion          RGB to YCbCr color conversion type. [0]
+                                   0 - ITU-R BT.601, RGB limited [16...235] (BT601_l.mat)
+                                   1 - ITU-R BT.709, RGB limited [16...235] (BT709_l.mat)
+                                   2 - User defined, coeffs defined in testbench.
+                                   3 - BT.2020
+                                   4 - ITU-R BT.601, RGB full [0...255] (BT601_f.mat)
+                                   5 - ITU-R BT.601, RGB limited [0...219] (BT601_219.mat)
+                                   6 - ITU-R BT.709, RGB limited [0...255] (BT709_f.mat)
+        --mirror                   Mirror input image. [0]
+                                   0 - disabled
+                                   1 - mirror
+  -r[n] --rotation                 Rotate input image. [0]
+                                   0 - disabled
+                                   1 - 90  degrees right
+                                   2 - 90  degrees left
+                                   3 - 180 degrees right
+        --scaledWidth              0..width, width of encoder down-scaled image, 0=disable [0]
+        --scaledHeight             0..height, height of encoder down-scaled image, 0=disable [0], written in scaled.yuv
+        --scaledOutputFormat       scaler output frame format, 0=YUV422 1=YUV420SP(NV12) [0]
+        --interlacedFrame          0=Input progressive field,
+                                   1=Input frame with fields interlaced [0]
+        --fieldOrder               Interlaced field order, 0=bottom first 1=top first[0]
+
+ Parameters for SW to convert input to customized specific format:
+        --formatCustomizedType     -1..1 set alignment value [-1]
+                                   -1 = Disable format conversion 
+                                   0..11 = convert to one customized format 
+
+ Parameters affecting the output stream and encoding tools:
+  -P[n] --profile                  VC8000E/HEVC encoder profile  [0]
+                                   VC8000E/HEVC only support main profile, main still picture profile and main 10 profile
+                                   0  -main profile
+                                   1  -main still picture profile
+                                   2  -main 10 profile
+                                   VC8000E/H264 encoder profile [11]
+                                   VC8000E/H264 only support baseline, main, high, high10 profile
+                                   9   -baseline profile
+                                   10  -main profile
+                                   11  -high profile
+                                   12  -high10 profile
+  -L[n] --level                    VC8000E/HEVC level 180 = Level 6.0*30  [180]
+                                   VC8000E/HEVC HW only support less than or equal to Level 5.1 high tier in realtime
+                                   for Level 5.0 and Level 5.1, support resolution up to 4096x2048 with 4K@60fps performance 
+                                   for Level great than Level 5.1, support in none realtime mode 
+                                   Each level has resolution and bitrate limitations:
+                                   30  -Level1.0  QCIF      (176x144)       128kbits
+                                   60  -Level2.0  CIF       (352x288)       1.5Mbits
+                                   63  -Level2.1  Q720p     (640x360)       3.0Mbits
+                                   90  -Level3.0  QHD       (960x540)       6.0Mbits
+                                   93  -Level3.1  720p HD   (1280x720)      10.0Mbits
+                                   120 -Level4.0  2Kx1080   (2048x1080)     12.0Mbits   High tier 30Mbits
+                                   123 -Level4.1  2Kx1080   (2048x1080)     20.0Mbits   High tier 50Mbits
+                                   150 -Level5.0  4096x2160 (4096x2160)     25.0Mbits   High tier 100Mbits
+                                   153 -Level5.1  4096x2160 (4096x2160)     40.0Mbits   High tier 160Mbits
+                                   156 -Level5.2  4096x2160 (4096x2160)     60.0Mbits   High tier 240Mbits
+                                   180 -Level6.0  8192x4320 (8192x4320)     60.0Mbits   High tier 240Mbits
+                                   VC8000E/H264 level 51 = Level 5.1 [51] 
+                                   10 -H264_LEVEL_1 
+                                   99 -H264_LEVEL_1_b 
+                                   11 -H264_LEVEL_1_1 
+                                   12 -H264_LEVEL_1_2 
+                                   13 -H264_LEVEL_1_3 
+                                   20 -H264_LEVEL_2 
+                                   21 -H264_LEVEL_2_1 
+                                   22 -H264_LEVEL_2_2
+                                   30 -H264_LEVEL_3 
+                                   31 -H264_LEVEL_3_1 
+                                   32 -H264_LEVEL_3_2 
+                                   40 -H264_LEVEL_4 
+                                   41 -H264_LEVEL_4_1 
+                                   42 -H264_LEVEL_4_2 
+                                   50 -H264_LEVEL_5 
+                                   51 -H264_LEVEL_5_1 
+                                   52 -H264_LEVEL_5_2 
+                                   60 -H264_LEVEL_6 
+                                   61 -H264_LEVEL_6_1 
+                                   62 -H264_LEVEL_6_2 
+        --tier                     VC8000E/HEVC encoder tier  [0]
+                                   VC8000E/HEVC only support main tier and high tier
+                                   0  -main tier
+                                   1  -high tier
+        --bitDepthLuma             bit depth of sample of luma in encoded stream [8]
+                                   8=8 bit,9=9 bit, 10= 10bit
+        --bitDepthChroma           bit depth of sample of Chroma in encoded stream  [8]
+                                   8=8 bit,9=9 bit, 10= 10bit
+  -N[n] --byteStream               Stream type. [1]
+                                   0 - NAL units. Nal sizes returned in <nal_sizes.txt>
+                                   1 - byte stream according to Hevc Standard Annex B.
+  -k[n] --videoRange               0..1 Video signal sample range value in Hevc stream. [0]
+                                   0 - Y range in [16..235] Cb,Cr in [16..240]
+                                   1 - Y,Cb,Cr range in [0..255]
+        --streamBufChain           Enable two output stream buffers. [0]
+                                   0 - Single output stream buffer.
+                                   1 - Two output stream buffers chained together.
+                                   Note the minimum allowable size of the first stream buffer is 11k bytes.
+  -S[n] --sei                      Enable SEI messages (buffering period + picture timing) [0]
+                                   Writes Supplemental Enhancement Information messages
+                                   containing information about picture time stamps
+                                   and picture buffering into stream.
+        --codecH264                Enable H264 encoding [0]
+                                   0: HEVC encoding
+                                   1: H264 encoding
+  -p[n] --cabacInitFlag            0..1 Initialization value for CABAC. [0]
+  -K[n] --enableCabac              0=OFF (CAVLC), 1=ON (CABAC). [1]
+  -e[n] --sliceSize                [0..height/ctu_size] slice size in number of CTU rows [0]
+                                   0 to encode each picture in one slice
+                                   [1..height/ctu_size] to each slice with N CTU row
+  -D[n] --disableDeblocking        0..1 Value of disable_deblocking_filter_idc [0]
+                                   0 = Inloop deblocking filter enabled (best quality)
+                                   1 = Inloop deblocking filter disabled
+  -M[n] --enableSao                0..1 Disable or Enable SAO Filter [1]
+                                   0 = SAO disabled 
+                                   1 = SAO enabled
+  -W[n] --tc_Offset                -6..6 Deblocking filter tc offset. [-2]
+  -E[n] --beta_Offset              -6..6 Deblocking filter beta offset. [5]
+        --enableDeblockOverride    0..1 deblocking override enable flag[0]
+                                   0 = Disable override 
+                                   1 = enable override 
+        --deblockOverride          0..1 deblocking override flag[0]
+                                   0 = not override filter parameter
+                                   1 = override filter parameter
+        --tile=a:b:c               HEVC Tile setting: tile enabled when num_tile_columns * num_tile_rows > 1. [1:1:1]
+                                       a: num_tile_columns 
+                                       b: num_tile_rows 
+                                       c: loop_filter_across_tiles_enabled_flag 
+        --enableScalingList        0..1 using default scaling list or not[0]
+                                   0 = using average scaling list. 
+                                   1 = using default scaling list. 
+        --RPSInSliceHeader         0..1 encoding rps in the slice header or not[0]
+                                   0 = not encoding rps in the slice header. 
+                                   1 = encoding rps in the slice header. 
+        --POCConfig=a:b:c          POC type/number of bits settings.
+                                       a: picOrderCntType. [0] 
+                                       b: log2MaxPicOrderCntLsb.[16] 
+                                       c: log2MaxFrameNum.[12] 
+
+ Parameters affecting GOP pattern, rate control and output stream bitrate:
+  -R[n] --intraPicRate             Intra picture rate in frames. [0]
+                                   Forces every Nth frame to be encoded as intra frame.
+  -B[n] --bitPerSecond             10000..levelMax, target bitrate for rate control [1000000]
+        --tolMovingBitRate         0...2000% percent tolerance over target bitrate of moving bit rate [2000]
+        --monitorFrames            10...120, how many frames will be monitored for moving bit rate [frame rate]
+        --bitVarRangeI             10...10000% percent variations over average bits per frame for I frame [10000]
+        --bitVarRangeP             10...10000% percent variations over average bits per frame for P frame [10000]
+        --bitVarRangeB             10...10000% percent variations over average bits per frame for B frame [10000]
+        --staticSceneIbitPercent  0...100 I frame bits percent of bitrate in static scene [80]
+  -U[n] --picRc                    0=OFF, 1=ON Picture rate control. [0]
+                                   Calculates new target QP for every frame.
+        --smoothPsnrInGOP          0=disable, 1=enable Smooth PSNR for frames in one GOP. [0]
+                                   Only affects gopSize > 1.
+  -u[n] --ctbRc                    0...3 CTB QP adjustment mode for Rate Control and Subjective Quality.[0]
+                                   0 = No CTB QP adjustment.
+                                   1 = CTB QP adjustment for Subjective Quality only.
+                                   2 = CTB QP adjustment for Rate Control only. (For HwCtbRcVersion >= 1 only).
+                                   3 = CTB QP adjustment for both Subjective Quality and Rate Control. (For HwCtbRcVersion >= 1 only).
+                                   adaptive adjustment of QP inside frame. 
+        --blockRCSize              Block size in CTB QP adjustment for Subjective Quality [0]
+                                   0=64x64 ,1=32x32, 2=16x16
+        --rcQpDeltaRange           Max absolute value of CU/MB Qp Delta to Frame QP by CTB RC [10]
+                                   0..15 for HwCtbRcVersion <= 1; 0..51 for HwCtbRcVersion > 1.
+        --rcBaseMBComplexity       0..31 MB complexity base in CTB QP adjustment for Subjective Quality [15]
+                                   MB with larger complexity offset to rcBaseMBComplexity, qpOffset larger 
+        --tolCtbRcInter            Tolerance of Ctb Rate Control for INTER frames. (float point number). [0.0]
+                                   Ctb Rc will try to limit INTER frame bits within the range of:
+                                       [targetPicSize/(1+tolCtbRcInter), targetPicSize*(1+tolCtbRcInter)].
+                                   A negative number means no bit rate limit in Ctb Rc.
+        --tolCtbRcIntra            Tolerance of Ctb Rate Control for INTRA frames. (float point number). [-1.0]
+        --ctbRowQpStep             The maximum accumulated QP adjustment step per CTB Row allowed by Ctb Rate Control.
+                                   Default value is [4] for H264 and [16] for HEVC.
+                                   QP_step_per_CTB = (ctbRowQpStep / Ctb_per_Row) and limited by maximum = 4.
+        --picQpDeltaRange          Min:Max. Qp_Delta Range in Picture RC.
+                                   Min: -1..-10 Minimum Qp_Delta in Picture RC. [-2]
+                                   Max:  1..10  Maximum Qp_Delta in Picture RC. [3]
+                                   This range only applies to two neighbouring frames of same coding Type.
+                                   This range doesn't apply when HRD Overflow occurs.
+  -C[n] --hrdConformance           0=OFF, 1=ON HRD conformance. [0]
+                                   Uses standard defined model to limit bitrate variance.
+  -c[n] --cpbSize                  HRD Coded Picture Buffer size in bits. [1000000]
+                                   Buffer size used by the HRD model.
+  -g[n] --bitrateWindow                1..300, Bitrate window length in frames[--intraPicRate]
+                                   Rate control allocates bits for one window and tries to
+                                   match the target bitrate at the end of each window.
+                                   Typically window begins with an intra frame, but this
+                                   is not mandatory.
+        --gopSize                  GOP Size. [0]
+                                   0..8, 0 for adaptive GOP size; 1~7 for fixed GOP size
+        --gopConfig                GOP configuration file by user, which defines the GOP structure table:
+                                   FrameN Type POC QPoffset QPfactor  TemporalId  num_ref_pics ref_pics  used_by_cur
+                                   -FrameN: normal GOP Config.The table should contain GOPSize lines, named Frame1, Frame2, etc.
+                                    The frames are listed in decoding order.
+                                   -Type: Slice type, can be either P or B.
+                                   -POC: Display order of the frame within a GOP, ranging from 1 to GOPSize.
+                                   -QPOffset: It is added to the QP parameter to set the final QP value used for this frame.
+                                   -QPFactor: Weight used during rate distortion optimization.
+                                   -TemporalId: temporal layer ID.
+                                   -num_ref_pics: The number of reference pictures kept for this frame,
+                                    including references for current and future pictures.
+                                   -ref_pics: A List of num_ref_pics integers,
+                                    specifying the delta_POC of the reference pictures kept, relative the POC of the current frame or LTR's index.
+                                   -used_by_cur: A List of num_ref_pics binaries,
+                                    specifying whether the corresponding reference picture is used by current picture.
+                                   If this config file is not specified, Default parameters will be used.
+                                   Frame0 Type QPoffset QPfactor  TemporalId num_ref_pics ref_pics  used_by_cur LTR  Offset  Interval
+                                   -Frame0: The table should contain GOPSize lines
+                                    The frames are listed in decoding order.
+                                   -Type: Slice type, if the value is not reserved, it instend of the value in normal config for special frame.[-255]
+                                   -QPOffset: if the value is not reserved, it instend of the value in normal config for special frame.[-255]
+                                   -QPFactor: if the value is not reserved, it instend of the value in normal config for special frame.[-255]
+                                   -TemporalId: temporal layer ID.if the value is not reserved, it instend of the value in normal config for special frame.[-255]
+                                   -num_ref_pics: The number of reference pictures kept for this frame
+                                    including references for current and future pictures.
+                                   -ref_pics: A List of num_ref_pics integers,
+                                    specifying the delta_POC of the reference pictures kept, relative the POC of the current frame or LTR's index.
+                                   -used_by_cur: A List of num_ref_pics binaries,
+                                   -LTR: 0...VCENC_MAX_LT_REF_FRAMES. long term reference setting, 0 - common frame, 1..VCENC_MAX_LT_REF_FRAMES -long term reference's index
+                                   -Offset: if LTR = 0, POC_Frame_Use_LTR (0)- POC_LTR. POC_LTR is LTR's POC, POC_Frame_Use_LTR (0) is the first frame after LTR that use the LTR as reference.
+                                            if LTR != 0, the offset of the first LTR frame to the first encoded frame.
+                                   -Interval: if LTR = 0, POC_Frame_Use_LTR(n+1) - POC_Frame_Use_LTR(n). The POC delta between two continuous Frames that use the same LTR as reference.
+                                              if LTR != 0, POC_LTR(n+1) - POC_LTR(n). POC_LTR is LTR's POC,The POC delta between two continuous Frames that encoded as the same LTR index.
+                                    specifying whether the corresponding reference picture is used by current picture.
+                                   If this config file is not specified, Default parameters will be used.
+        --LTR=a:b:c:[:d]           a:b:c[:d] long term reference setting
+                                       a:    POC_delta of two frames which be used as LTR.
+                                       b:    POC_Frame_Use_LTR (0)- POC_LTR. POC_LTR is LTR's POC, POC_Frame_Use_LTR (0) is the first frame after LTR that use the LTR as reference.
+                                       c:    POC_Frame_Use_LTR(n+1) - POC_Frame_Use_LTR(n).  The POC delta between two continuous Frames that use the same LTR as reference.
+                                       d:    QP delta for frame using LTR. [0]
+        --gopLowdelay              Use default lowDelay GOP configuration if --gopConfig not specified, only valid for GOP size <= 4. [0]
+                                   0 = not enable gopLowDelay mode
+                                   1 = enable gopLowDelay mode
+  -s[n] --picSkip                  0=OFF, 1=ON Picture skip rate control. [0]
+                                   Allows rate control to skip frames if needed.
+  -q[n] --qpHdr                    -1..51, Initial target QP. [26]
+                                   -1 = Encoder calculates initial QP. NOTE: use -q-1
+                                   The initial QP used in the beginning of stream.
+  -n[n] --qpMin                    0..51, Minimum frame header QP for any slices. [0]
+  -m[n] --qpMax                    0..51, Maximum frame header QP for any slices. [51]
+        --qpMinI                   0..51, Minimum frame header QP overriding qpMin for I slices. [0]
+        --qpMaxI                   0..51, Maximum frame header QP overriding qpMax for I slices. [51]
+  -A[n] --intraQpDelta             -51..51, Intra QP delta. [-5]
+                                   QP difference between target QP and intra frame QP.
+  -G[n] --fixedIntraQp             0..51, Fixed Intra QP, 0 = disabled. [0]
+                                   Use fixed QP value for every intra frame in stream.
+  -V[n] --bFrameQpDelta            -1..51, BFrame QP Delta.[-1]
+                                   QP difference between BFrame QP and target QP.
+                                   If a GOP config file is specified by --gopConfig, it will be overrided
+                                   -1 not take effect, 0-51 could take effect.
+  -I[n] --chromaQpOffset           -12..12 Chroma QP offset. [0]
+        --vbr                      0=OFF, 1=ON. Variable Bit Rate Control by qpMin. [0]
+        --sceneChange               Frame1:Frame2:...:Frame20. Specify scene change frames, seperated by ':'. Max number is 20.
+        --gdrDuration              how many pictures(frames not fields) it will take to do GDR [0]
+                                   0 : disable GDR(Gradual decoder refresh), >0: enable GDR 
+                                   the start point of GDR is the frame which type is set to VCENC_INTRA_FRAME 
+                                   intraArea and roi1Area will be used to implement GDR function.
+        --skipFramePOC             [n] Force encode whole frame as SkipFrame when POC=n. [0]
+                                   0: Disable. 
+                                   none zero: set the frame POC to be encoded as Skip Frame. 
+
+Parameters affecting coding:
+  -z[s] --userData                 SEI User data file name. File is read and inserted
+                                       as SEI message before first frame.
+        --cir                      start:interval for Cyclic Intra Refresh.
+                                   Forces ctbs in intra mode. [0:0]
+        --intraArea                left:top:right:bottom CTB coordinates
+                                       specifying rectangular area of CTBs to
+                                       force encoding in intra mode.
+        --ipcm1Area                left:top:right:bottom CTB coordinates
+        --ipcm2Area                left:top:right:bottom CTB coordinates
+                                       specifying rectangular area of CTBs to
+                                       force encoding in IPCM mode.
+        --ipcmMapEnable            0-disable,1-enable. [0]
+        --ipcmMapFile              IPCM map file is set by user, which defines the IPCM flag for each CTB in frame. 
+                                   the block size is 64x64 for HEVC and 16x16 for H264. 
+        --roi1Area                 left:top:right:bottom CTB coordinates
+        --roi2Area                 left:top:right:bottom CTB coordinates
+        --roi3Area                 left:top:right:bottom CTB coordinates
+        --roi4Area                 left:top:right:bottom CTB coordinates
+        --roi5Area                 left:top:right:bottom CTB coordinates
+        --roi6Area                 left:top:right:bottom CTB coordinates
+        --roi7Area                 left:top:right:bottom CTB coordinates
+        --roi8Area                 left:top:right:bottom CTB coordinates
+                                       specifying rectangular area of CTBs as
+                                       Region Of Interest with lower QP.
+        --roi1DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 1 CTBs. [0]
+        --roi2DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 2 CTBs. [0]
+        --roi3DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 3 CTBs. [0]
+        --roi4DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 4 CTBs. [0]
+        --roi5DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 5 CTBs. [0]
+        --roi6DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 6 CTBs. [0]
+        --roi7DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 7 CTBs. [0]
+        --roi8DeltaQp              -30..0 (-51..51 if absolute ROI QP supported), QP delta value for ROI 8 CTBs. [0]
+        --roi1Qp                   0..51, absolute QP value for ROI 1 CTBs. [-1]. negative value is invalid. 
+        --roi2Qp                   0..51, absolute QP value for ROI 2 CTBs. [-1]
+        --roi3Qp                   0..51, absolute QP value for ROI 3 CTBs. [-1]
+        --roi4Qp                   0..51, absolute QP value for ROI 4 CTBs. [-1]
+        --roi5Qp                   0..51, absolute QP value for ROI 5 CTBs. [-1]
+        --roi6Qp                   0..51, absolute QP value for ROI 6 CTBs. [-1]
+        --roi7Qp                   0..51, absolute QP value for ROI 7 CTBs. [-1]
+        --roi8Qp                   0..51, absolute QP value for ROI 8 CTBs. [-1]
+                                   roi1Qp/roi2Qp are only valid when absolute ROI QP supported. And please use either roiDeltaQp or roiQp.
+        --roiMapDeltaQpBlockUnit   0-64x64,1-32x32,2-16x16,3-8x8. [0]
+        --roiMapDeltaQpEnable         0-disable,1-enable. [0]
+        --roiMapDeltaQpFile        DeltaQp map file is set by user, which defines the QP delta for each block in frame.
+                                   the block size is defined by --roiMapDeltaQpBlockUnit.
+                                   QP delta range is from 0 to -15 if absolute ROI QP not supported.
+                                   QP delta range is from -31 to 32 if absolute ROI QP supported.
+                                   Absolute QP range is from 0 to 51 and specified with a prefix 'a', for example, 'a26'.
+                                   To calculate block width and height, alignment of 64 of picture width and height should be used.
+        --roiMapInfoBinFile        Roi map info binary file is set by user, which defines the QP delta or absQp for each block in frame.
+                                   the block size is defined by --roiMapDeltaQpBlockUnit, one byte for one block,the byte bitmap of QpDelta/skip/ipcm relative to --RoiQpDeltaVer.
+                                   QP delta range is from -31 to 32.
+                                   Absolute QP range is from 0 to 51.
+        --RoiQpDeltaVer            1..3, Roi Qp Delta map version number, valid only if --roiMapInfoBinFile not empty.
+        --RoimapCuCtrlInfoBinFile  Roi map cu ctrl info binary file is set by user, which defines the ROI cu ctrl info for each cu in frame.
+                                   the cu ctrl struct size is relative to --RoiCuCtrlVer.
+                                   number of cu ctrl is aligned to 64 of picture width and height in 8x8 unit.
+        --RoimapCuCtrlIndexBinFile Roi map cu ctrl index binary file is set by user, which defines whereif the roi info included in the file --RoimapCuCtrlInfoBinFile.
+                                   if the file --RoimapCuCtrlIndexBinFile not set by user, the roi info about cu in each ctb should inluded int the file --RoimapCuCtrlInfoBinFile.
+                                   if the file --RoimapCuCtrlIndexBinFile set by user, the roi info about cu in each ctb should inluded int the file --RoimapCuCtrlInfoBinFile.
+        --RoiCuCtrlVer             3..7, Roi map cu ctrl version number,valid only if --RoimapCuCtrlInfoBinFile not empty.
+
+ Parameters setting SKIP Map:
+        --skipMapEnable            Enable SKIP Map Mode. 0-No, 1-Yes. [0]
+        --skipMapBlockUnit         Block Size in SKIP Map Mode. [0]
+                                   0-64x64, 1-32x32, 2-16x16 and only 64x64 and 32x32 are valid for HEVC.
+        --skipMapFile              SKIP Map File set by user, which defines the SKIP forcing mode for each block in frame.
+                                   1 indicating SKIP forcing mode for a block and 0 indicating not.
+                                   To calculate block width and height, alignment of 64 of picture width and height should be used.
+
+ Parameters setting constant chroma:
+        --enableConstChroma        0..1 Enable/Disable setting chroma a constant pixel value. [0]
+                                   0 = Disable. 
+                                   1 = Enable. 
+        --constCb                  0..255 for 8-bit [128]; 0..1023 for 10-bit [512]. The constant pixel value for Cb. 
+        --constCr                  0..255 for 8-bit [128]; 0..1023 for 10-bit [512]. The constant pixel value for Cr. 
+
+ Parameters affecting coding and performance:
+        --rdoLevel                 1..3 Programable HW RDO Level [2]
+                                   Lower value means lower quality but better performance.  
+                                   Higher value means higher quality but worse performance.  
+
+ Parameters affecting reporting:
+        --enableOutputCuInfo       0..2 Enable/Disable writting CU encoding information to external memory [0]
+                                   0 = Disable. 
+                                   1 = Enable. 
+                                   2 = Enable and also Write information in file <cuInfo.txt>. 
+        --hashtype                 hash type for frame data hash. [0]
+                                   0=disable, 1=crc32, 2=checksum32. 
+        --ssim                     0..1 Enable/Disable SSIM Calculation [1]
+                                   0 = Disable. 
+                                   1 = Enable. 
+        --enableVuiTimingInfo       Write VUI timing info in SPS. [1]
+                                    0=disable. 
+                                    1=enable. 
+
+ Parameters affecting lookahead encoding:
+        --lookaheadDepth            number of lookahead frames. range [0, 40] [0]
+                                    0=disable. 
+                                    4-40=set number of lookahead frames and enable 2-pass encoding. 
+        --halfDsInput               external provided half-downsampled input yuv.
+        --cutreeDSRatio             downsample ratio for cu tree. cu tree analyse can work on downsampled resolution. 
+                                    Mode A: if HW has in-loop down-sample in prp, SW enable down-sample by default, pass-1 working on downsampled resolutio
+                                                 SW internal set cutreeDSRatio=2, user not need config this
+                                    Mode B: if HW has no in-loop down-sample in prp, SW to control pass-1 resolution(user may do external down-sample)
+                                                 Then, the SW must explict set cutreeDSRatio correspond with the pass1/pass2 ratio, default is [1]
+                                    1=no downsample. 
+                                    2=pass-1 working on 1/2 downsample resolution. 
+                                    4=pass-1 working on 1/4 downsample resolution. 
+
+ Parameters affecting Reference Frame Compressor:
+        --compressor               0..3 Enable/Disable Embedded Compression [0]
+                                   0 = Disable Compression 
+                                   1 = Only Enable Luma Compression 
+                                   2 = Only Enable Chroma Compression 
+                                   3 = Enable Both Luma and Chroma Compression 
+        --enableP010Ref            0..1 Enable/Disable P010 Reference format [0]
+                                   0 = Disable. 
+                                   1 = Enable. 
+
+ Parameters affecting low latency input:
+        --inputLineBufferMode 0..4 Input buffer mode control. [0]
+                                 0 = Disable input line buffer. 
+                                 1 = Enable. SW handshaking. Loop back enabled.
+                                 2 = Enable. HW handshaking. Loop back enabled.
+                                 3 = Enable. SW handshaking. Loop back disabled.
+                                 4 = Enable. HW handshaking. loop back disabled.
+        --inputLineBufferDepth 0..511. The number of CTB/MB rows to control Loop-back/Handshaking. [1]
+                                 Control Loop back mode if it is enabled:
+                                   There are two continuous ping-pong input buffers, each contains inputLineBufferDepth CTB/MB Rows.
+                                 Control HW handshaking if it is enabled:
+                                   Handshaking Signal is processed per inputLineBufferDepth CTB/MB Rows.
+                                 Control SW handshaking if it is enabled:
+                                   IRQ is sent and Read Count Register is updated everytime inputLineBufferDepth CTB/MB Rows have been read.
+                                 0 is only allowed with inputLineBufferMode=3, IRQ won't be sent and Read Count Register won't be updated.
+        --inputLineBufferAmountPerLoopback 0..1023. Handshake sync amount for every loopback. [0]
+                                 0 = Disable input line buffer. 
+                                 1~1023 = number of slices per loopback 
+
+ Parameters affecting stream multi-segment output:
+        --streamMultiSegmentMode 0..2 stream multi-segment mode control. [-1]
+                                 0 = Disable stream multi-segment. 
+                                 1 = Enable. NO SW handshaking. Loop back enabled.
+                                 2 = Enable. SW handshaking. Loop back enabled.
+        --streamMultiSegmentAmount 2..16. the total amount of segments to control loopback/sw-handshake/IRQ. [4]
+
+ Parameters affecting noise reduction:
+        --noiseReductionEnable     enable noise reduction or not[0]
+                                   0 = disable NR. 
+                                   1 = enable NR. 
+        --noiseLow                 1..30 minimum noise value[10]. 
+        --noiseFirstFrameSigma     1..30 noise estimation for start frames[11].
+
+ Parameters affecting smart background detection:
+        --smartConfig              Usr configuration file for the Smart Algorithm. 
+
+ Parameters affecting global motion detection:
+        --gmvFile                  File containing ME Search Range Offset for list0.
+                                   Search Offsets of each frame are listed sequentially line by line. 
+                                   To set Frame Level Offset, there should be only one coordinate in a line for the whole frame.
+                                     For example: (MVX, MVY)
+                                   Some common delimiters are allowed between offsets, such as '()' white-space ',' ';'.
+        --gmv                      MVX:MVY. Horizontal and vertical Offsets of ME Search Range for list0 at Frame level[0:0].
+                                   If both --gmvFile and --gmv are specified, only gmvFile will be applied.
+                                   MVX should be 64 alignment and within the range of [-128, +128].
+                                   MVY should be 16 alignment and within the range of [-128, +128].
+        --gmvList1                 MVX:MVY. ME Search Range Offset for list1 at Frame level[0:0].
+        --gmvList1File             File containing ME Search Range Offset for list1.
+
+ Parameters affecting runtime log level:
+        --verbose                  0..1 Log Printing Mode [0]
+                                   0: print the most brief information.
+                                   1: print more slice information.
+
+ Parameters dump registers to sw_reg.trc:
+        --dumpRegister             0..1 dump register enable [0]
+                                   0: no register dump.
+                                   1: print register dump.
+
+ Raster scan output for recon on FPGA & HW:
+        --rasterscan               0..1 raster scan enable [0]
+                                   0: disable raster scan output.
+                                   1: enable raster scan output.
+
+ Parameters affecting HDR10: 
+        --HDR10_display=dx0:dy0:dx1:dy1:dx2:dy2:wx:wy:max:min    Mastering display colour volume SEI message
+                                   dx0 : 0...50000 component 0 normalized x chromaticity coordinates[0]
+                                   dy0 : 0...50000 component 0 normalized y chromaticity coordinates[0]
+                                   dx1 : 0...50000 component 1 normalized x chromaticity coordinates[0]
+                                   dy1 : 0...50000 component 1 normalized y chromaticity coordinates[0]
+                                   dx2 : 0...50000 component 2 normalized x chromaticity coordinates[0]
+                                   dy2 : 0...50000 component 2 normalized y chromaticity coordinates[0]
+                                   wx  : 0...50000 white point normalized x chromaticity coordinates[0]
+                                   wy  : 0...50000 white point normalized y chromaticity coordinates[0]
+                                   max : nominal maximum display luminance[0]
+                                   min : nominal minimum display luminance[0]
+        --HDR10_lightlevel=maxlevel:avglevel    Content light level info SEI message
+                                   maxlevel : max content light level
+                                   avglevel : max picture average light level
+        --HDR10_colordescription=primary:transfer:matrix    colour_description
+                                   primary : 9  index of chromaticity coordinates  in Table E.3 in HEVC SPEC[9]
+                                   transfer : 0...2 index of the reference opto - electronic transfer characteristic 
+                                              function of the source picture in Table E.4 in HEVC SPEC[0]
+                                              0 ---- BT.2020, 1 ---- SMPTE ST 2084, 2 ---- ARIB STD-B67
+                                   matrix : 9  index of matrix coefficients used in deriving luma and chroma signals 
+                                               from the green, blue and red or Y, Z and X primaries in Table E.5 in HEVC SPEC[9]
+
+ Parameters for multi-core parallel:
+  --parallelCoreNum                1...4 Num of core running parallel at frame level. [1]
+
+ Temporary Testing Parameters for internal use:
+  --smoothingIntra                 [n]   0=Normal, 1=Strong. Enable or disable strong_intra_smoothing_enabled_flag. [1]
+  --testId                         Internal test ID. [0]
+  --outReconFrame                  0=reconstructed frame is not output, 1= reconstructed frame is output [1]
+  --roiMapDeltaQpBinFile           DeltaQp map binary file set by user, only valid when --lookaheadDepth > 0.
+                                   Every byte stands for a block unit deltaQp in raster-scan order.
+                                   The block unit size is defined by --roiMapDeltaQpBlockUnit (0-64x64,1-32x32,2-16x16,3-8x8).
+                                   Frame width and height are aligned to block unit size when setting deltaQp per block.
+                                   Frame N data is followed by Frame N+1 data directly in display order.
+
+
+ Temporary Testing multiple encoder instances in multi-threads mode or multi-processors mode:
+    --multimode 2                 Specity encoders running parallel in multi-threads or multi-processes.
+                                      0: disable
+                                      1: multi-threads mode
+                                      2: multi-processes mode
+    --streamcfg                   Specify the filename storing encoder options, 
+
