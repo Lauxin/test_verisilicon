@@ -21,51 +21,47 @@ file_list = ["BasketballPass"  ,
              "PeopleOnStreet"
             ]
 qp_list = [22,27,32,37]
+directory = "."
+os.chdir(directory + '/result')
+cwd = os.getcwd()  
 
 with open("result.csv","w") as file_object:
     file_object.write("bitrate(kb/s) , psnr(Y) , psnr(U) , psnr(V) , Sequence\n")
 
-for file_name in file_list:
-    for qp in qp_list:
-        directory = "."
-        os.chdir(directory)
-        cwd = os.getcwd()  
+files = os.listdir(os.getcwd())
+for file in files:
+    if "log" in file.split("."):
         y_psnr = 0
         u_psnr = 0
         v_psnr = 0
         bitrate = 0
-        cout = 0        
-        with open(file_name + "/" + str(qp) + "/" + "profile.log") as file_object:
+        cout = 0
+        with open(file) as file_object:
+            # print (file)
             lines = file_object.readlines()
         for line in lines:
-            if '[I-Slice]' in line.split():
-                element  = line.split()
-                if float(element[3]) == float(qp):
-                    y_psnr  += float(element[7 ])
-                    u_psnr  += float(element[10])
-                    v_psnr  += float(element[13])
-                    bitrate += float(element[4 ])
-                    cout += 1
-        with open("./result.csv","a") as file_object:
+            element  = line.split()
+            # print (element)
+            if 'CModel::POC' in element and 'QP' in element and element[1] == '0':
+                y_psnr  += float(element[7 ])
+                u_psnr  += float(element[10])
+                v_psnr  += float(element[13])
+                bitrate += float(element[4 ])
+                cout += 1
+        with open("result.csv","a") as file_object:
             if cout != 0:
                 file_object.write(str(bitrate*60/cout/1000) +",")
                 file_object.write(str(y_psnr/cout) +",")
                 file_object.write(str(u_psnr/cout) +",")
                 file_object.write(str(v_psnr/cout) +",")
-                file_object.write(file_name+"\n")
+                file_object.write(str(file)+"\n")
+                print ('statistic '+str(cout)+' frames')
 
 
+# os.remove("result_temp.csv")  
 
 
-
-
-
-
-
-
-
-
-
+## ************ origin version ************ ##
 
 # directory = "."
 # os.chdir(directory + )

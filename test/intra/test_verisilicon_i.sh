@@ -80,16 +80,17 @@ do
 
     # core
     ../../bin/hevc_testenc_vc8000e                                    \
-      -c ../../cfg/aimain.cfg   \
-      -c ../../cfg/yuv.cfg      \
       -i                            "${SEQ_FILE}.yuv"         \
       -o                            "${BIN_FILE}.hevc"        \
       -w                            ${SEQ_WID}                \
       -h                            ${SEQ_HEI}                \
-      -b                            ${FRAME_LEN}              \
+      -b                            $((FRAME_LEN-1))          \
       -q                            ${QP_VAL}                 \
       --gopSize                     1                         \
       --intraPicRate                1                         \
+      --rdoLevel                    1                         \
+      --byteStream                  1                         \
+      --outReconFrame               0                         \
     >& "${BIN_FILE}.log" &
 
     # counter
