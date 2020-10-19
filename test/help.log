@@ -263,7 +263,7 @@ HEVC API parameters can be found from HEVC API Manual.
                                    0..8, 0 for adaptive GOP size; 1~7 for fixed GOP size
         --gopConfig                GOP configuration file by user, which defines the GOP structure table:
                                    FrameN Type POC QPoffset QPfactor  TemporalId  num_ref_pics ref_pics  used_by_cur
-                                   -FrameN: normal GOP Config.The table should contain GOPSize lines, named Frame1, Frame2, etc.
+                                   -FrameN: normal GOP Config. The table should contain GOPSize lines, named Frame1, Frame2, etc.
                                     The frames are listed in decoding order.
                                    -Type: Slice type, can be either P or B.
                                    -POC: Display order of the frame within a GOP, ranging from 1 to GOPSize.
@@ -283,7 +283,7 @@ HEVC API parameters can be found from HEVC API Manual.
                                    -Type: Slice type, if the value is not reserved, it instend of the value in normal config for special frame.[-255]
                                    -QPOffset: if the value is not reserved, it instend of the value in normal config for special frame.[-255]
                                    -QPFactor: if the value is not reserved, it instend of the value in normal config for special frame.[-255]
-                                   -TemporalId: temporal layer ID.if the value is not reserved, it instend of the value in normal config for special frame.[-255]
+                                   -TemporalId: temporal layer ID. if the value is not reserved, it instend of the value in normal config for special frame.[-255]
                                    -num_ref_pics: The number of reference pictures kept for this frame
                                     including references for current and future pictures.
                                    -ref_pics: A List of num_ref_pics integers,

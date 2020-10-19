@@ -2,5 +2,5 @@
 *.zip
 
 # generate
-result/
+result*
 deblock.yuv

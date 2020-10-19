@@ -14,23 +14,23 @@ RLT_DIR="result"
 RLT_LOG="result.log"
 SEQ_LST=(
          "BasketballPass"   416   240   60 8
-         "BQSquare"         416   240   60 8
-         "BlowingBubbles"   416   240   60 8
-         "RaceHorses"       416   240   60 8
-         "BasketballDrill"  832   480   60 8
-         "BQMall"           832   480   60 8
-         "PartyScene"       832   480   60 8
-         "RaceHorsesC"      832   480   60 8
-         "FourPeople"       1280  720   60 8
-         "Johnny"           1280  720   60 8
-         "KristenAndSara"   1280  720   60 8
-         "Kimono"           1920  1080  60 8
-         "ParkScene"        1920  1080  60 8
-         "Cactus"           1920  1080  60 8
-         "BasketballDrive"  1920  1080  60 8
-         "BQTerrace"        1920  1080  60 8
-         "Traffic"          2560  1600  60 8
-         "PeopleOnStreet"   2560  1600  60 8
+        #  "BQSquare"         416   240   60 8
+        #  "BlowingBubbles"   416   240   60 8
+        #  "RaceHorses"       416   240   60 8
+        #  "BasketballDrill"  832   480   60 8
+        #  "BQMall"           832   480   60 8
+        #  "PartyScene"       832   480   60 8
+        #  "RaceHorsesC"      832   480   60 8
+        #  "FourPeople"       1280  720   60 8
+        #  "Johnny"           1280  720   60 8
+        #  "KristenAndSara"   1280  720   60 8
+        #  "Kimono"           1920  1080  60 8
+        #  "ParkScene"        1920  1080  60 8
+        #  "Cactus"           1920  1080  60 8
+        #  "BasketballDrive"  1920  1080  60 8
+        #  "BQTerrace"        1920  1080  60 8
+        #  "Traffic"          2560  1600  60 8
+        #  "PeopleOnStreet"   2560  1600  60 8
         )
 QP_LST=(22 27 32 37)
 FRAME_LEN=15    # 0 stands for inf
@@ -80,15 +80,17 @@ do
 
     # core
     ../../bin/hevc_testenc_vc8000e                                    \
-      -c ../../cfg/aimain.cfg   \
-      -c ../../cfg/yuv.cfg      \
       -i                            "${SEQ_FILE}.yuv"         \
       -o                            "${BIN_FILE}.hevc"        \
       -w                            ${SEQ_WID}                \
       -h                            ${SEQ_HEI}                \
       -b                            $((FRAME_LEN-1))          \
       -q                            ${QP_VAL}                 \
-      --gopSize                     1                         \
+      --gopSize                     4                         \
+      --gopConfig                   ../../cfg/veriP.cfg       \
+      --rdoLevel                    1                         \
+      --byteStream                  1                         \
+      --outReconFrame               0                         \
     >& "${BIN_FILE}.log" &
 
     # counter
